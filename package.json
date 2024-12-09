@@ -1,7 +1,6 @@
 {
   "homepage": "https://jassisamuran.github.io/ecommerce-project",
   "name": "proshop",
-  "proxy": "https://gg-6702.onrender.com",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

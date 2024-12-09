@@ -24,7 +24,11 @@ const ProductCarousel = () => {
       {products.map((product) => (
         <Carousel.Item key={product._id}>
           <Link to={`https://gg-6702.onrender.com/product/${product._id}`}>
-            <Image src={product.image} alt={product.name} fluid />
+            <Image
+              src={`http://localhost:5000/${product.image}`}
+              alt={product.name}
+              fluid
+            />
             <Carousel.Caption>
               <h2>
                 {product.name} ({product.price})

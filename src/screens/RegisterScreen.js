@@ -1,104 +1,107 @@
-import React,{useState,useEffect} from 'react'
-import {Link, redirect,useNavigate} from 'react-router-dom'
-import { ReactLocation, Router } from 'react-location'
-import {Form,Row,Col,Button} from 'react-bootstrap'
-import {useDispatch,useSelector} from 'react-redux'
-import Loader from '../components/Loader'
-import Message from '../components/Message'
-import { register} from '../actions/userActions'
-import FormContainer from '../components/FormContainer'
-const RegisterScreen = ({}) => {
-    const navigate=useNavigate()
-    const [name,setName]=useState('')
-    const [email,setEmail]=useState('')
-    const [password,setpassword]=useState('')
-    const [confirmpassword,setConfirmpassword]=useState('')
-    const [message,setMessage]=useState(null)
-     
-    
-    const userLogin=useSelector(state=>state.userLogin)
-    const {loading,error,userInfo}=userLogin
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Form, Row, Col, Button } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
+import { register } from "../actions/userActions";
+import FormContainer from "../components/FormContainer";
 
-    const location = new ReactLocation()
-    const redirect=location.search?location.search.split('=')[1]:'/'
-    console.log(redirect)
-    useEffect(()=>{
-      if(userInfo){
-        navigate(redirect)
-      }
-    },[navigate,userInfo,redirect])
-    const dispatch=useDispatch()
-    
-    const submitHandler =(e)=>{
-      e.preventDefault()
-        if(password!==confirmpassword){
-            setMessage('Password do not match')
-        }else dispatch(register(name,email,password))
+const RegisterScreen = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState(null);
+
+  const userRegister = useSelector((state) => state.userRegister);
+  const { loading, error, userInfo } = userRegister;
+
+  const redirect = location.search ? location.search.split("=")[1] : "/login";
+  console.log(redirect);
+
+  useEffect(() => {
+    if (userInfo) {
+      // navigate(redirect);
     }
-    const setPassword=()=>{
-      console.log('set password')
+  }, [navigate, userInfo, redirect]);
+
+  const dispatch = useDispatch();
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setMessage("Passwords do not match");
+    } else {
+      dispatch(register(name, email, password));
+      navigate(`/login`);
     }
+  };
 
   return (
     <FormContainer>
-      <h1>Sign In</h1>
-      {message && <Message variant='danger'>{message}</Message>}
-      {loading &&<Loader/>}
+      <h1>Sign Up</h1>
+      {message && <Message variant="danger">{message}</Message>}
+      {error && <Message variant="danger">{error}</Message>}
+      {loading && <Loader />}
       <Form onSubmit={submitHandler}>
-
-      <Form.Group controlId='name'>
-            <Form.Label>Name</Form.Label>
-            <Form.Control type='name' placeholder='Enter name'
+        <Form.Group controlId="name">
+          <Form.Label>Name</Form.Label>
+          <Form.Control
+            type="name"
+            placeholder="Enter name"
             value={name}
-            onChange={(e)=>setName(e.target.value)}
-            
-            ></Form.Control>
+            onChange={(e) => setName(e.target.value)}
+          ></Form.Control>
         </Form.Group>
 
-        
-        <Form.Group controlId='email'>
-            <Form.Label>Email Address</Form.Label>
-            <Form.Control type='email' placeholder='Enter email'
+        <Form.Group controlId="email">
+          <Form.Label>Email Address</Form.Label>
+          <Form.Control
+            type="email"
+            placeholder="Enter email"
             value={email}
-            onChange={(e)=>setEmail(e.target.value)}
-            
-            ></Form.Control>
+            onChange={(e) => setEmail(e.target.value)}
+          ></Form.Control>
         </Form.Group>
 
-        <Form.Group controlId='password'>
-            <Form.Label>Password </Form.Label>
-            <Form.Control type='password' placeholder='Enter password'
+        <Form.Group controlId="password">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
+            type="password"
+            placeholder="Enter password"
             value={password}
-            onChange={(e)=>setpassword(e.target.value)}
-            
-            ></Form.Control>
+            onChange={(e) => setPassword(e.target.value)}
+          ></Form.Control>
         </Form.Group>
 
-        <Form.Group controlId='confirmpassword'>
-            <Form.Label>Confirm Password</Form.Label>
-            <Form.Control type='password' placeholder='Enter password'
-            value={confirmpassword}
-            onChange={(e)=>setConfirmpassword(e.target.value)}
-            
-            ></Form.Control>
+        <Form.Group controlId="confirmPassword">
+          <Form.Label>Confirm Password</Form.Label>
+          <Form.Control
+            type="password"
+            placeholder="Confirm password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          ></Form.Control>
         </Form.Group>
 
-        <Button type='submit' variant='primary'>
-            Regiter
+        <Button type="submit" variant="primary">
+          Register
         </Button>
       </Form>
 
-      <Row className='py-3'>
+      <Row className="py-3">
         <Col>
-        Have an Account?{' '}
-        <Link to={redirect?`login?redirect=${redirect}`:'/login'}>
-          Login
-        </Link>
+          Have an Account?{" "}
+          <Link to={redirect ? `/login?redirect=${redirect}` : "/login"}>
+            Login
+          </Link>
         </Col>
       </Row>
-      
     </FormContainer>
-  )
-}
+  );
+};
 
-export default RegisterScreen
+export default RegisterScreen;

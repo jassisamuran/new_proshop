@@ -1,9 +1,13 @@
-main{
+main {
   min-height: 80vh;
 }
-h3{
+h3 {
   padding: 1;
 }
 .rating span {
-  margin:0.1rem; 
+  margin: 0.1rem;
+}
+.product-image {
+  height: 250px; /* Adjust height as needed */
+  object-fit: cover; /* Maintain aspect ratio */
 }

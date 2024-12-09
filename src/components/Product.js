@@ -3,11 +3,15 @@ import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Rating from "./Rating";
 const Product = ({ product }) => {
+  const main = "http://localhost:5000";
+  const next = product.image;
+  const fullPath = `${main}/${next}`;
+  // console.log(fullPath);
   return (
     <Card className="my-3 p-3 rounded">
       {/* <h1>{product._id}</h1> */}
-      <Link to={`https://gg-6702.onrender.com/product/${product._id}`}>
-        <Card.Img src={product.image} variant="top" />
+      <Link to={`/product/${product._id}`}>
+        <Card.Img src={fullPath} variant="top" className="product-image" />
       </Link>
 
       <Card.Body>
