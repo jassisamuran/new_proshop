@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from "react";
-import products from "../products";
-import { Row, Col } from "react-bootstrap";
-import Product from "../components/Product";
+import { useEffect } from "react";
+import { Col, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
-import LOader from "../components/Loader";
+import Product from "../components/Product";
 
 // import axios from 'axios'
 import { listProduct } from "../actions/productActions";
-import ProductCarousel from "../components/ProductCarousel";
 const Homescreens = () => {
   const dispatch = useDispatch();
   // const [product,setproduct]=useState([])
@@ -26,7 +23,7 @@ const Homescreens = () => {
   // const products=[]
   return (
     <>
-      <ProductCarousel />
+      {/* <ProductCarousel /> */}
       <h1>Latest Products</h1>
       {loading ? (
         <h2>Loading...</h2>
