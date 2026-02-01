@@ -142,6 +142,7 @@ const OrderScreen = () => {
                     <ListGroup.Item>
                       <Row>
                         <Col>Items</Col>
+                        <Col>{order.orderItems.length}</Col>
                       </Row>
                     </ListGroup.Item>
                     <ListGroup.Item>

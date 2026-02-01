@@ -60,6 +60,7 @@ const PlaceOrderScreen = () => {
     return `https://proshop-2-8zob.onrender.com/${image}`;
     // Replace 'your_port' with the port number your server is running on
   };
+  const totalItems = cart.cartItems.reduce((acc, data) => acc + data.qty, 0);
   return (
     <>
       <CheckoutSteps step1 step2 step3 step4 />
@@ -122,7 +123,7 @@ const PlaceOrderScreen = () => {
               <ListGroup.Item>
                 <Row>
                   <Col>Items</Col>
-                  <Col>${cart.itemsPrice}</Col>
+                  <Col>{totalItems}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
