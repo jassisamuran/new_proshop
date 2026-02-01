@@ -6,7 +6,6 @@ import Product from "../components/Product";
 
 // import axios from 'axios'
 import { listProduct } from "../actions/productActions";
-import ProductCarousel from "../components/ProductCarousel";
 const Homescreens = () => {
   const dispatch = useDispatch();
   // const [product,setproduct]=useState([])
@@ -24,7 +23,7 @@ const Homescreens = () => {
   // const products=[]
   return (
     <>
-      <ProductCarousel />
+      {/* <ProductCarousel /> */}
       <h1>Latest Products</h1>
       {loading ? (
         <h2>Loading...</h2>
