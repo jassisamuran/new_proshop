@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Col,
-  ListGroup,
-  Image,
-  Row,
-  Card,
   Button,
-  ListGroupItem,
+  Card,
+  Col,
   Form,
+  Image,
+  ListGroup,
+  ListGroupItem,
+  Row,
 } from "react-bootstrap";
-import { useNavigate, Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Rating from "../components/Rating";
-import Message from "../components/Message";
-import Loader from "../components/Loader";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
-  listProductDetails,
   createProductReview,
+  listProductDetails,
 } from "../actions/productActions";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
+import Rating from "../components/Rating";
 import { PRODUCT_CREATE_REVIEW_RESET } from "../constants/productConstants";
 
 const ProductScreen = () => {
@@ -65,7 +65,7 @@ const ProductScreen = () => {
     objectFit: "cover", // adjust this if needed
   };
 
-  const main = "http://localhost:5000"; // Base URL of your backend
+  const main = "https://proshop-2-8zob.onrender.com/"; // Base URL of your backend
   const next = product.image?.replace("../", ""); // Remove '../' from the path if present
   const fullPath = next ? `${main}/${next}` : ""; // Construct the full path
   return (
@@ -142,7 +142,7 @@ const ProductScreen = () => {
                                 <option key={x + 1} value={x + 1}>
                                   {x + 1}
                                 </option>
-                              )
+                              ),
                             )}
                           </Form.Control>
                         </Col>

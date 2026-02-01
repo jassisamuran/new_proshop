@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useState } from "react";
 import {
   CART_ADD_ITEMS,
   CART_REMOVE_ITEMS,
@@ -8,7 +7,10 @@ import {
 } from "../constants/cartConstants";
 
 export const addToCart = (id, qty) => async (dispatch, getState) => {
-  const { data } = await axios.get(`http://localhost:5000/api/products/${id}`);
+  const { data } = await axios.get(
+    `https://proshop-2-8zob.onrender.com/api/products/${id}`,
+  );
+
   console.log(data);
   dispatch({
     type: CART_ADD_ITEMS,

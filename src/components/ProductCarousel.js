@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
 import { Carousel, Image } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { listTopProducts } from "../actions/productActions";
 import Loader from "./Loader";
 import Message from "./Message";
-import { listTopProducts } from "../actions/productActions";
 
 const ProductCarousel = () => {
   const dispatch = useDispatch();
@@ -25,7 +25,7 @@ const ProductCarousel = () => {
         <Carousel.Item key={product._id}>
           <Link to={`https://gg-6702.onrender.com/product/${product._id}`}>
             <Image
-              src={`http://localhost:5000/${product.image}`}
+              src={`https://proshop-2-8zob.onrender.com/${product.image}`}
               alt={product.name}
               fluid
             />

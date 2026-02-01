@@ -1,15 +1,11 @@
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Row, Col, ListGroup, Image, Card, Button } from "react-bootstrap";
+import { useEffect } from "react";
+import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { getOrderDetails, deliverOrder } from "../actions/orderActions";
+import { Link, useParams } from "react-router-dom";
+import { deliverOrder, getOrderDetails } from "../actions/orderActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import { useParams } from "react-router-dom";
-import {
-  ORDER_DELIVERED_RESET,
-  ORDER_DETAILS_RESET,
-} from "../constants/orderConstansts";
+import { ORDER_DETAILS_RESET } from "../constants/orderConstansts";
 
 const OrderScreen = () => {
   const dispatch = useDispatch();
@@ -43,7 +39,7 @@ const OrderScreen = () => {
     dispatch(deliverOrder(order));
   };
   const formatImageSrc = (image) => {
-    return `http://localhost:5000/${image}`;
+    return `https://proshop-2-8zob.onrender.com/${image}`;
   };
   // Check if user is admin or the order belongs to the logged-in user
   if (

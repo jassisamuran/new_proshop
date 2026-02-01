@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   ORDER_CREATE_FAIL,
   ORDER_CREATE_REQUEST,
@@ -18,7 +19,6 @@ import {
   ORDER_PAY_REQUEST,
   ORDER_PAY_SUCCESS,
 } from "../constants/orderConstansts";
-import axios from "axios";
 
 export const createOrder = (order) => async (dispatch, getState) => {
   try {
@@ -35,9 +35,9 @@ export const createOrder = (order) => async (dispatch, getState) => {
       },
     };
     const { data } = await axios.post(
-      `http://localhost:5000/api/orders`,
+      `https://proshop-2-8zob.onrender.com/api/orders`,
       order,
-      config
+      config,
     );
     dispatch({
       type: ORDER_CREATE_SUCCESS,
@@ -69,8 +69,8 @@ export const getOrderDetails = (id) => async (dispatch, getState) => {
       },
     };
     const { data } = await axios.get(
-      `http://localhost:5000/api/orders/${id}`,
-      config
+      `https://proshop-2-8zob.onrender.com/api/orders/${id}`,
+      config,
     );
     console.log("this is data ");
     console.log(data);
@@ -94,7 +94,7 @@ export const getOrderDetails = (id) => async (dispatch, getState) => {
 //     try {
 //       dispatch({ type: ORDER_DETAILS_REQUEST });
 //       const { userLogin: { userInfo },} = getState();
-//       const {data} = await axios.get(`http://localhost:5000/api/orders/${orderId}`, {
+//       const {data} = await axios.get(`https://proshop-2-8zob.onrender.com/api/orders/${orderId}`, {
 //         headers:
 //           { Authorization: 'Bearer ' + userInfo.token }
 //       });
@@ -121,9 +121,9 @@ export const payOrder =
         },
       };
       const { data } = await axios.put(
-        `http://localhost:5000/api/orders/${orderId}/pay`,
+        `https://proshop-2-8zob.onrender.com/api/orders/${orderId}/pay`,
         paymentResult,
-        config
+        config,
       );
       console.log("this is data ");
       console.log(data);
@@ -158,8 +158,8 @@ export const listMyOrders = () => async (dispatch, getState) => {
       },
     };
     const { data } = await axios.get(
-      `http://localhost:5000/api/orders/myorders`,
-      config
+      `https://proshop-2-8zob.onrender.com/api/orders/myorders`,
+      config,
     );
     console.log("this is data ");
     console.log(data);
@@ -194,8 +194,8 @@ export const listOrders = () => async (dispatch, getState) => {
       },
     };
     const { data } = await axios.get(
-      `http://localhost:5000/api/orders`,
-      config
+      `https://proshop-2-8zob.onrender.com/api/orders`,
+      config,
     );
     console.log("this is data ");
     console.log(data);
@@ -231,9 +231,9 @@ export const deliverOrder = (order) => async (dispatch, getState) => {
       },
     };
     const { data } = await axios.put(
-      `http://localhost:5000/api/orders/${order._id}/deliver`,
+      `https://proshop-2-8zob.onrender.com/api/orders/${order._id}/deliver`,
       {},
-      config
+      config,
     );
     console.log("this is data ");
     console.log(data);

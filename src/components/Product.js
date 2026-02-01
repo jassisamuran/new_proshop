@@ -1,9 +1,8 @@
-import React from "react";
 import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Rating from "./Rating";
 const Product = ({ product }) => {
-  const main = "http://localhost:5000";
+  const main = "https://proshop-2-8zob.onrender.com/";
   const next = product.image;
   const fullPath = `${main}/${next}`;
   // console.log(fullPath);

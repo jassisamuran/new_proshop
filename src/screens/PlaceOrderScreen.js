@@ -1,17 +1,7 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { ReactLocation, Router } from "react-location";
-import { useNavigate, Link } from "react-router-dom";
-import {
-  Form,
-  Row,
-  Col,
-  Button,
-  ListGroup,
-  Image,
-  Card,
-} from "react-bootstrap";
+import { useEffect } from "react";
+import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import { createOrder } from "../actions/orderActions";
 import CheckoutSteps from "../components/CheckoutSteps";
 import Message from "../components/Message";
@@ -25,7 +15,7 @@ const PlaceOrderScreen = () => {
   };
   cart.itemsPrice = cart.cartItems.reduce(
     (acc, item) => acc + item.price * item.qty,
-    0
+    0,
   );
   cart.shippingPrice = cart.itemsPrice > 100 ? 0 : 100;
   cart.taxPrice = Number((0.15 * cart.itemsPrice).toFixed(2));
@@ -62,12 +52,12 @@ const PlaceOrderScreen = () => {
         postalcode: cart.postalcode,
         taxPrice: cart.taxPrice,
         totalPrice: cart.totalPrice,
-      })
+      }),
     );
   };
 
   const formatImageSrc = (image) => {
-    return `http://localhost:5000/${image}`;
+    return `https://proshop-2-8zob.onrender.com/${image}`;
     // Replace 'your_port' with the port number your server is running on
   };
   return (

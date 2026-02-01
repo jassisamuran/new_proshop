@@ -1,19 +1,19 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import Message from "../components/Message";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import {
-  Row,
-  Col,
-  ListGroup,
-  Image,
-  Form,
   Button,
   Card,
+  Col,
+  Form,
+  Image,
+  ListGroup,
   ListGroupItem,
+  Row,
 } from "react-bootstrap";
-import { addToCart, removefromcart } from "../actions/cartActions";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
+import { addToCart, removefromcart } from "../actions/cartActions";
+import Message from "../components/Message";
 
 const Cart = () => {
   const { id, qty } = useParams();
@@ -51,7 +51,7 @@ const Cart = () => {
                 <Row>
                   <Col md={2}>
                     <Image
-                      src={`http://localhost:5000/${item.image}`}
+                      src={`https://proshop-2-8zob.onrender.com/${item.image}`}
                       alt={item.name}
                       fluid
                       rounded
@@ -67,7 +67,7 @@ const Cart = () => {
                       value={item.qty}
                       onChange={(e) =>
                         dispatch(
-                          addToCart(item.product, Number(e.target.value))
+                          addToCart(item.product, Number(e.target.value)),
                         )
                       }
                     >

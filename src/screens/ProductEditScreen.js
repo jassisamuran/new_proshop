@@ -1,13 +1,13 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
-import { Link, redirect, useNavigate } from "react-router-dom";
-import { Form, Row, Col, Button, NavItem, File } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Button, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
+import { listProductDetails, updateProduct } from "../actions/productActions";
+import FormContainer from "../components/FormContainer";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import FormContainer from "../components/FormContainer";
-import { listProductDetails, updateProduct } from "../actions/productActions";
 import { PRODUCT_UPDATE_RESET } from "../constants/productConstants";
 const ProductEditScreen = ({}) => {
   const navigate = useNavigate();
@@ -70,9 +70,9 @@ const ProductEditScreen = ({}) => {
         },
       };
       const { data } = await axios.post(
-        "http://localhost:5000/api/upload",
+        "https://proshop-2-8zob.onrender.com/api/upload",
         formData,
-        config
+        config,
       );
       console.log(data);
       setImage(data);
@@ -96,7 +96,7 @@ const ProductEditScreen = ({}) => {
         category,
         countInStock,
         // qty,
-      })
+      }),
     );
   };
   const setPassword = () => {
