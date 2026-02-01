@@ -75,7 +75,7 @@ const ProductEditScreen = ({}) => {
         config,
       );
       console.log(data);
-      setImage(data);
+      setImage(data.imageUrl);
       setUploading(false);
     } catch (err) {
       console.log(err);
