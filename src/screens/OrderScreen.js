@@ -110,7 +110,7 @@ const OrderScreen = () => {
                             <Row>
                               <Col md={1}>
                                 <Image
-                                  src={formatImageSrc(item.image)}
+                                  src={item.image}
                                   alt={item.name}
                                   fluid
                                   rounded
