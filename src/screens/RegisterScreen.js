@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Form, Row, Col, Button } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import Loader from "../components/Loader";
-import Message from "../components/Message";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { register } from "../actions/userActions";
 import FormContainer from "../components/FormContainer";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
 
 const RegisterScreen = () => {
   const navigate = useNavigate();
@@ -37,6 +37,7 @@ const RegisterScreen = () => {
     } else {
       dispatch(register(name, email, password));
       navigate(`/login`);
+      window.location.reload();
     }
   };
 
