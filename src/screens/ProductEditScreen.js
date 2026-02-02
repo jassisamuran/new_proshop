@@ -155,8 +155,14 @@ const ProductEditScreen = ({}) => {
         </Form.Group> */}
 
             <input type="file" onChange={handleChange} />
-            <img src={image} />
-
+            <div className="mt-3">
+              <img
+                src={image}
+                width={500}
+                height={300}
+                alt="Please select an Image"
+              />
+            </div>
             {uploading && <Loader />}
             <Form.Group controlId="brand">
               <Form.Label>Brand </Form.Label>

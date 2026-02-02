@@ -85,7 +85,7 @@ const ProductScreen = () => {
               className="d-flex justify-content-center align-items-center"
             >
               <Image
-                src={fullPath}
+                src={product.image}
                 alt={product.name}
                 fluid
                 style={imageStyle}
