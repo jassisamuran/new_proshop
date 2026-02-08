@@ -24,7 +24,8 @@ const RegisterScreen = () => {
 
   useEffect(() => {
     if (userInfo) {
-      // navigate(redirect);
+      navigate(`/login`);
+      window.location.reload();
     }
   }, [navigate, userInfo, redirect]);
 
@@ -36,8 +37,6 @@ const RegisterScreen = () => {
       setMessage("Passwords do not match");
     } else {
       dispatch(register(name, email, password));
-      navigate(`/login`);
-      window.location.reload();
     }
   };
 
