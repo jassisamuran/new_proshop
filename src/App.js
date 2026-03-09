@@ -1,6 +1,7 @@
 import { Container } from "react-bootstrap";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
+import AIChatWidget from "./components/AIChatWidget";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Cart from "./screens/Cart";
@@ -77,6 +78,7 @@ function App() {
         </Container>
       </main>
       <Footer />
+      <AIChatWidget />
     </>
   );
 }
