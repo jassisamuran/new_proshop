@@ -19,6 +19,7 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import Rating from "../components/Rating";
 import { PRODUCT_CREATE_REVIEW_RESET } from "../constants/productConstants";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const ProductScreen = () => {
   const [qty, setQty] = useState(1);
@@ -65,7 +66,7 @@ const ProductScreen = () => {
     objectFit: "cover", // adjust this if needed
   };
 
-  const main = "https://proshop-2-8zob.onrender.com/"; // Base URL of your backend
+  const main = `${apiUrl}`; // Base URL of your backend
   const next = product.image?.replace("../", ""); // Remove '../' from the path if present
   const fullPath = next ? `${main}/${next}` : ""; // Construct the full path
   return (

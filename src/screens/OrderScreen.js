@@ -6,6 +6,7 @@ import { deliverOrder, getOrderDetails } from "../actions/orderActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { ORDER_DETAILS_RESET } from "../constants/orderConstansts";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const OrderScreen = () => {
   const dispatch = useDispatch();
@@ -39,7 +40,7 @@ const OrderScreen = () => {
     dispatch(deliverOrder(order));
   };
   const formatImageSrc = (image) => {
-    return `https://proshop-2-8zob.onrender.com/${image}`;
+    return `${apiUrl}/${image}`;
   };
   // Check if user is admin or the order belongs to the logged-in user
   if (

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Form, Button } from "react-bootstrap";
+import { useState } from "react";
+import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 const SearchBox = () => {
   const navigate = useNavigate();
@@ -7,8 +7,10 @@ const SearchBox = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    const apiUrl = process.env.REACT_APP_API_URL;
+
     if (keyword.trim()) {
-      navigate(`https://gg-6702.onrender.com/search/${keyword}`);
+      navigate(`${apiUrl}/search/${keyword}`);
     } else {
       navigate("/");
     }

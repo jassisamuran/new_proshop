@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { createOrder } from "../actions/orderActions";
 import CheckoutSteps from "../components/CheckoutSteps";
 import Message from "../components/Message";
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const PlaceOrderScreen = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();

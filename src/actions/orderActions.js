@@ -19,6 +19,7 @@ import {
   ORDER_PAY_REQUEST,
   ORDER_PAY_SUCCESS,
 } from "../constants/orderConstansts";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 export const createOrder = (order) => async (dispatch, getState) => {
   try {
@@ -34,11 +35,9 @@ export const createOrder = (order) => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    const { data } = await axios.post(
-      `https://proshop-2-8zob.onrender.com/api/orders`,
-      order,
-      config,
-    );
+    const apiUrl = process.env.REACT_APP_API_URL;
+
+    const { data } = await axios.post(`${apiUrl}/api/orders`, order, config);
     dispatch({
       type: ORDER_CREATE_SUCCESS,
       payload: data,
@@ -68,10 +67,8 @@ export const getOrderDetails = (id) => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    const { data } = await axios.get(
-      `https://proshop-2-8zob.onrender.com/api/orders/${id}`,
-      config,
-    );
+
+    const { data } = await axios.get(`${apiUrl}/api/orders/${id}`, config);
     console.log("this is data ");
     console.log(data);
 
@@ -94,7 +91,7 @@ export const getOrderDetails = (id) => async (dispatch, getState) => {
 //     try {
 //       dispatch({ type: ORDER_DETAILS_REQUEST });
 //       const { userLogin: { userInfo },} = getState();
-//       const {data} = await axios.get(`https://proshop-2-8zob.onrender.com/api/orders/${orderId}`, {
+//       const {data} = await axios.get(`${apiUrl}/api/orders/${orderId}`, {
 //         headers:
 //           { Authorization: 'Bearer ' + userInfo.token }
 //       });
@@ -121,7 +118,7 @@ export const payOrder =
         },
       };
       const { data } = await axios.put(
-        `https://proshop-2-8zob.onrender.com/api/orders/${orderId}/pay`,
+        `${apiUrl}/api/orders/${orderId}/pay`,
         paymentResult,
         config,
       );
@@ -157,10 +154,7 @@ export const listMyOrders = () => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    const { data } = await axios.get(
-      `https://proshop-2-8zob.onrender.com/api/orders/myorders`,
-      config,
-    );
+    const { data } = await axios.get(`${apiUrl}/api/orders/myorders`, config);
     console.log("this is data ");
     console.log(data);
 
@@ -193,10 +187,7 @@ export const listOrders = () => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    const { data } = await axios.get(
-      `https://proshop-2-8zob.onrender.com/api/orders`,
-      config,
-    );
+    const { data } = await axios.get(`${apiUrl}/api/orders`, config);
     console.log("this is data ");
     console.log(data);
 
@@ -231,7 +222,7 @@ export const deliverOrder = (order) => async (dispatch, getState) => {
       },
     };
     const { data } = await axios.put(
-      `https://proshop-2-8zob.onrender.com/api/orders/${order._id}/deliver`,
+      `${apiUrl}/api/orders/${order._id}/deliver`,
       {},
       config,
     );

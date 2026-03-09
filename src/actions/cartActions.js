@@ -7,9 +7,9 @@ import {
 } from "../constants/cartConstants";
 
 export const addToCart = (id, qty) => async (dispatch, getState) => {
-  const { data } = await axios.get(
-    `https://proshop-2-8zob.onrender.com/api/products/${id}`,
-  );
+  const apiUrl = process.env.REACT_APP_API_URL;
+
+  const { data } = await axios.get(`${apiUrl}/api/products/${id}`);
 
   console.log(data);
   dispatch({

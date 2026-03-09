@@ -22,12 +22,14 @@ import {
   PRODUCT_UPDATE_REQUEST,
   PRODUCT_UPDATE_SUCCESS,
 } from "../constants/productConstants";
+const apiUrl = process.env.REACT_APP_API_URL;
+
 export const listProduct = () => async (dispatch) => {
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   try {
     dispatch({ type: PRODUCT_LIST_REQUEST });
-    const { data } = await axios.get(
-      `https://proshop-2-8zob.onrender.com/api/products`,
-    );
+    const { data } = await axios.get(`${apiUrl}/api/products`);
     // throw new Error("some erooe")
     dispatch({
       type: PRODUCT_LIST_SUCCESS,
@@ -47,9 +49,7 @@ export const listProduct = () => async (dispatch) => {
 export const listProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST });
-    const { data } = await axios.get(
-      `https://proshop-2-8zob.onrender.com/api/products/${id}`,
-    );
+    const { data } = await axios.get(`${apiUrl}/api/products/${id}`);
     // throw new Error("some erooe")
     dispatch({
       type: PRODUCT_DETAILS_SUCCESS,
@@ -80,10 +80,7 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    const { data } = await axios.delete(
-      `https://proshop-2-8zob.onrender.com/api/products/${id}`,
-      config,
-    );
+    const { data } = await axios.delete(`${apiUrl}/api/products/${id}`, config);
     console.log(data);
 
     dispatch({
@@ -113,11 +110,7 @@ export const createProduct = () => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    const { data } = await axios.post(
-      `https://proshop-2-8zob.onrender.com/api/products`,
-      {},
-      config,
-    );
+    const { data } = await axios.post(`${apiUrl}/api/products`, {}, config);
     console.log(data);
 
     dispatch({
@@ -151,7 +144,7 @@ export const updateProduct = (product) => async (dispatch, getState) => {
       },
     };
     const { data } = await axios.put(
-      `https://proshop-2-8zob.onrender.com/api/products/${product._id}`,
+      `${apiUrl}/api/products/${product._id}`,
       product,
       config,
     );
@@ -189,7 +182,7 @@ export const createProductReview =
         },
       };
       const { data } = await axios.post(
-        `https://proshop-2-8zob.onrender.com/api/products/${productId}/reviews`,
+        `${apiUrl}/api/products/${productId}/reviews`,
         review,
         config,
       );
@@ -213,9 +206,7 @@ export const createProductReview =
 export const listTopProducts = () => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_TOP_REQUEST });
-    const { data } = await axios.get(
-      `https://proshop-2-8zob.onrender.com/api/products/${34}/top`,
-    );
+    const { data } = await axios.get(`${apiUrl}/api/products/${34}/top`);
     console.log(data);
     dispatch({
       type: PRODUCT_TOP_SUCCESS,
