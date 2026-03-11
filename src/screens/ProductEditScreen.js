@@ -9,6 +9,8 @@ import FormContainer from "../components/FormContainer";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { PRODUCT_UPDATE_RESET } from "../constants/productConstants";
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const ProductEditScreen = ({}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();

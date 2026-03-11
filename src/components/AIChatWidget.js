@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./AIChatWidget.css";
 
 const AIChatWidget = () => {
@@ -7,10 +7,17 @@ const AIChatWidget = () => {
   const [messages, setMessages] = useState([
     { sender: "bot", text: "Hello 👋 How can I help you?" },
   ]);
+  const apiUrl = process.env.REACT_APP_CHAT_BOAT_URL;
 
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState(null);
+
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
 
   // Load token from localStorage
   useEffect(() => {
@@ -31,15 +38,12 @@ const AIChatWidget = () => {
 
     const loadChat = async () => {
       try {
-        const res = await fetch(
-          "http://localhost:8000/api/v1/chat/latest-messages",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "X-API-Key": "sk-kajGzlc98N_HWZYE4n9SHG_r4w5uTHqc7BdVmBjE3DA",
-            },
+        const res = await fetch(`${apiUrl}/api/v1/chat/latest-messages`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-API-Key": "sk-kajGzlc98N_HWZYE4n9SHG_r4w5uTHqc7BdVmBjE3DA",
           },
-        );
+        });
 
         const data = await res.json();
 
@@ -62,36 +66,36 @@ const AIChatWidget = () => {
   }, [token]);
 
   const sendMessage = async () => {
-    if (!input.trim()) return;
-
-    const userMessage = { sender: "user", text: input };
-
-    setMessages((prev) => [...prev, userMessage]);
+    if (!input.trim() || loading) return;
 
     const question = input;
+
+    const userMessage = {
+      sender: "user",
+      text: question,
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setLoading(true);
 
     try {
       const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
 
-      const response = await fetch(
-        "http://localhost:8000/api/v1/chat/message",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userInfo.token}`,
-            "X-API-Key": "sk-kajGzlc98N_HWZYE4n9SHG_r4w5uTHqc7BdVmBjE3DA",
-          },
-          body: JSON.stringify({
-            message: question,
-            conversation_id: localStorage.getItem("conversation_id") ?? null,
-            channel: "web",
-            stream: false,
-          }),
+      const response = await fetch(`${apiUrl}/api/v1/chat/message`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
+          "X-API-Key": "sk-kajGzlc98N_HWZYE4n9SHG_r4w5uTHqc7BdVmBjE3DA",
         },
-      );
+        body: JSON.stringify({
+          message: question,
+          conversation_id: localStorage.getItem("conversation_id") ?? null,
+          channel: "web",
+          stream: false,
+        }),
+      });
 
       const data = await response.json();
 
@@ -144,7 +148,11 @@ const AIChatWidget = () => {
               </div>
             ))}
 
-            {loading && <div className="bot-message">Typing...</div>}
+            {loading && (
+              <div className="bot-message">Assistant is typing...</div>
+            )}
+
+            <div ref={bottomRef}></div>
           </div>
 
           <div className="chat-input">
@@ -152,10 +160,17 @@ const AIChatWidget = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask something..."
-              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              disabled={loading}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !loading) {
+                  sendMessage();
+                }
+              }}
             />
 
-            <button onClick={sendMessage}>Send</button>
+            <button onClick={sendMessage} disabled={loading}>
+              {loading ? "..." : "Send"}
+            </button>
           </div>
         </div>
       )}

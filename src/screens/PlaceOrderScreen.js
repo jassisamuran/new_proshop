@@ -59,7 +59,7 @@ const PlaceOrderScreen = () => {
   };
 
   const formatImageSrc = (image) => {
-    return `https://proshop-2-8zob.onrender.com/${image}`;
+    return `${apiUrl}/${image}`;
     // Replace 'your_port' with the port number your server is running on
   };
   const totalItems = cart.cartItems.reduce((acc, data) => acc + data.qty, 0);
