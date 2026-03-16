@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import "./AIChatWidget.css";
 
 const AIChatWidget = () => {
+  const apiUrl = process.env.REACT_APP_CHAT_BOAT_URL;
+
   const [open, setOpen] = useState(false);
 
   const [messages, setMessages] = useState([
     { sender: "bot", text: "Hello 👋 How can I help you?" },
   ]);
-  const apiUrl = process.env.REACT_APP_CHAT_BOAT_URL;
 
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,44 +20,102 @@ const AIChatWidget = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  // Load token from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("userInfo");
 
     if (stored) {
       const parsed = JSON.parse(stored);
-
-      if (parsed?.token) {
-        setToken(parsed.token);
-      }
+      if (parsed?.token) setToken(parsed.token);
     }
   }, []);
 
-  // Load previous chat
+  useEffect(() => {
+    if (!open || !token) return;
+
+    const createConversationIfNeeded = async () => {
+      let conversationId = localStorage.getItem("conversation_id");
+
+      if (conversationId) return;
+
+      try {
+        const res = await fetch(`${apiUrl}/api/v1/chat/session`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            "X-API-Key": "sk-kajGzlc98N_HWZYE4n9SHG_r4w5uTHqc7BdVmBjE3DA",
+          },
+          body: JSON.stringify({
+            message: "hello",
+            action_type: "chat",
+            conversation_id: null,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (data.conversation_id) {
+          localStorage.setItem("conversation_id", data.conversation_id);
+        }
+      } catch (err) {
+        console.error("Conversation creation failed", err);
+      }
+    };
+
+    createConversationIfNeeded();
+  }, [open, token]);
+
   useEffect(() => {
     if (!token) return;
 
     const loadChat = async () => {
       try {
-        const res = await fetch(`${apiUrl}/api/v1/chat/latest-messages`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "X-API-Key": "sk-kajGzlc98N_HWZYE4n9SHG_r4w5uTHqc7BdVmBjE3DA",
+        const conversationId = localStorage.getItem("conversation_id");
+        const res = await fetch(
+          `${apiUrl}/api/v1/chat/latest-messages?conversation_id=${conversationId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "X-API-Key": "sk-kajGzlc98N_HWZYE4n9SHG_r4w5uTHqc7BdVmBjE3DA",
+            },
           },
-        });
+        );
 
         const data = await res.json();
 
-        if (data?.conversation_id) {
-          localStorage.setItem("conversation_id", data.conversation_id);
+        if (!data?.conversation_id) return;
 
-          const formatted = data.messages.map((m) => ({
+        localStorage.setItem("conversation_id", data.conversation_id);
+
+        const assistantMessages = [];
+        const navigationMessages = [];
+
+        data.messages.forEach((m) => {
+          if (m.type === "navigation") {
+            navigationMessages.push(m);
+            return;
+          }
+
+          assistantMessages.push({
             sender: m.role === "assistant" ? "bot" : "user",
             text: m.content,
-          }));
+            buttons: m.ui_buttons || null,
+            message_id: m.id,
+            clicked: null,
+          });
+        });
 
-          setMessages(formatted);
-        }
+        navigationMessages.forEach((nav) => {
+          const index = assistantMessages.findIndex(
+            (msg) => msg.message_id === nav.target_message_id,
+          );
+
+          if (index !== -1) {
+            assistantMessages[index].clicked = nav.button;
+          }
+        });
+
+        setMessages(assistantMessages);
       } catch (err) {
         console.error("Load chat failed", err);
       }
@@ -65,35 +124,47 @@ const AIChatWidget = () => {
     loadChat();
   }, [token]);
 
-  const sendMessage = async () => {
-    if (!input.trim() || loading) return;
+  const sendMessage = async (
+    message,
+    actionType = "chat",
+    targetMessageId = null,
+  ) => {
+    const stored = localStorage.getItem("userInfo");
 
-    const question = input;
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (parsed?.token) setToken(parsed.token);
+    }
+    if (!token) {
+      setMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: "⚠️ Please login to use the AI assistant." },
+      ]);
+      return;
+    }
 
-    const userMessage = {
-      sender: "user",
-      text: question,
-    };
+    if (!message.trim() || loading) return;
 
-    setMessages((prev) => [...prev, userMessage]);
+    if (actionType === "chat") {
+      setMessages((prev) => [...prev, { sender: "user", text: message }]);
+    }
+
     setInput("");
     setLoading(true);
 
     try {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
-
       const response = await fetch(`${apiUrl}/api/v1/chat/message`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${userInfo.token}`,
+          Authorization: `Bearer ${token}`,
           "X-API-Key": "sk-kajGzlc98N_HWZYE4n9SHG_r4w5uTHqc7BdVmBjE3DA",
         },
         body: JSON.stringify({
-          message: question,
-          conversation_id: localStorage.getItem("conversation_id") ?? null,
-          channel: "web",
-          stream: false,
+          message: message,
+          action_type: actionType,
+          conversation_id: localStorage.getItem("conversation_id"),
+          target_message_id: targetMessageId,
         }),
       });
 
@@ -105,7 +176,10 @@ const AIChatWidget = () => {
 
       const botReply = {
         sender: "bot",
-        text: data.message || "No response from AI",
+        text: data.message,
+        buttons: data.ui_buttons || null,
+        message_id: data.message_id || null,
+        clicked: null,
       };
 
       setMessages((prev) => [...prev, botReply]);
@@ -119,6 +193,35 @@ const AIChatWidget = () => {
     }
 
     setLoading(false);
+  };
+
+  const handleClose = () => {
+    localStorage.removeItem("conversation_id");
+
+    setMessages([{ sender: "bot", text: "Hello 👋 How can I help you?" }]);
+
+    setOpen(false);
+  };
+  const handleButtonClick = (direction, index) => {
+    const message = messages[index];
+
+    if (!message.message_id) {
+      console.error("Navigation message_id missing", message);
+      return;
+    }
+
+    setMessages((prev) => {
+      const updated = [...prev];
+
+      updated[index] = {
+        ...updated[index],
+        clicked: direction,
+      };
+
+      return updated;
+    });
+
+    sendMessage(direction, "navigation", message.message_id);
   };
 
   return (
@@ -138,13 +241,51 @@ const AIChatWidget = () => {
 
           <div className="chat-body">
             {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={
-                  msg.sender === "user" ? "user-message" : "bot-message"
-                }
-              >
-                {msg.text}
+              <div key={index}>
+                <div
+                  className={
+                    msg.sender === "user" ? "user-message" : "bot-message"
+                  }
+                >
+                  {msg.text}
+                </div>
+
+                {msg.buttons && (
+                  <div className="chat-buttons">
+                    {msg.buttons.previous && (
+                      <button
+                        className={`nav-button ${
+                          msg.clicked === "previous" ? "active-nav" : ""
+                        }`}
+                        disabled={msg.clicked !== null}
+                        onClick={() => handleButtonClick("previous", index)}
+                      >
+                        ← Previous
+                      </button>
+                    )}
+
+                    {msg.buttons.next && (
+                      <button
+                        className={`nav-button ${
+                          msg.clicked === "next" ? "active-nav" : ""
+                        }`}
+                        disabled={msg.clicked !== null}
+                        onClick={() => handleButtonClick("next", index)}
+                      >
+                        Next →
+                      </button>
+                    )}
+
+                    {msg.buttons.close_chat && (
+                      <button
+                        className="nav-button"
+                        onClick={() => handleClose("close")}
+                      >
+                        Close Chat →{" "}
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
 
@@ -162,13 +303,16 @@ const AIChatWidget = () => {
               placeholder="Ask something..."
               disabled={loading}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && !loading) {
-                  sendMessage();
+                if (e.key === "Enter") {
+                  sendMessage(input, "chat");
                 }
               }}
             />
 
-            <button onClick={sendMessage} disabled={loading}>
+            <button
+              disabled={loading}
+              onClick={() => sendMessage(input, "chat")}
+            >
               {loading ? "..." : "Send"}
             </button>
           </div>
