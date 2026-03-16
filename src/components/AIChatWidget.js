@@ -30,16 +30,56 @@ const AIChatWidget = () => {
   }, []);
 
   useEffect(() => {
+    if (!open || !token) return;
+
+    const createConversationIfNeeded = async () => {
+      let conversationId = localStorage.getItem("conversation_id");
+
+      if (conversationId) return;
+
+      try {
+        const res = await fetch(`${apiUrl}/api/v1/chat/session`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            "X-API-Key": "sk-kajGzlc98N_HWZYE4n9SHG_r4w5uTHqc7BdVmBjE3DA",
+          },
+          body: JSON.stringify({
+            message: "hello",
+            action_type: "chat",
+            conversation_id: null,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (data.conversation_id) {
+          localStorage.setItem("conversation_id", data.conversation_id);
+        }
+      } catch (err) {
+        console.error("Conversation creation failed", err);
+      }
+    };
+
+    createConversationIfNeeded();
+  }, [open, token]);
+
+  useEffect(() => {
     if (!token) return;
 
     const loadChat = async () => {
       try {
-        const res = await fetch(`${apiUrl}/api/v1/chat/latest-messages`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "X-API-Key": "sk-kajGzlc98N_HWZYE4n9SHG_r4w5uTHqc7BdVmBjE3DA",
+        const conversationId = localStorage.getItem("conversation_id");
+        const res = await fetch(
+          `${apiUrl}/api/v1/chat/latest-messages?conversation_id=${conversationId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "X-API-Key": "sk-kajGzlc98N_HWZYE4n9SHG_r4w5uTHqc7BdVmBjE3DA",
+            },
           },
-        });
+        );
 
         const data = await res.json();
 
@@ -155,6 +195,13 @@ const AIChatWidget = () => {
     setLoading(false);
   };
 
+  const handleClose = () => {
+    localStorage.removeItem("conversation_id");
+
+    setMessages([{ sender: "bot", text: "Hello 👋 How can I help you?" }]);
+
+    setOpen(false);
+  };
   const handleButtonClick = (direction, index) => {
     const message = messages[index];
 
@@ -226,6 +273,15 @@ const AIChatWidget = () => {
                         onClick={() => handleButtonClick("next", index)}
                       >
                         Next →
+                      </button>
+                    )}
+
+                    {msg.buttons.close_chat && (
+                      <button
+                        className="nav-button"
+                        onClick={() => handleClose("close")}
+                      >
+                        Close Chat →{" "}
                       </button>
                     )}
                   </div>
