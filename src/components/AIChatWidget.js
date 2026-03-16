@@ -20,9 +20,6 @@ const AIChatWidget = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  /*
-  Load token
-  */
   useEffect(() => {
     const stored = localStorage.getItem("userInfo");
 
@@ -68,9 +65,6 @@ const AIChatWidget = () => {
           });
         });
 
-        /*
-        Re-apply navigation clicks
-        */
         navigationMessages.forEach((nav) => {
           const index = assistantMessages.findIndex(
             (msg) => msg.message_id === nav.target_message_id,
@@ -95,8 +89,6 @@ const AIChatWidget = () => {
     actionType = "chat",
     targetMessageId = null,
   ) => {
-    // if (!message.trim() || loading) return;
-
     const stored = localStorage.getItem("userInfo");
 
     if (stored) {
