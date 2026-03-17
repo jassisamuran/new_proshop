@@ -7,7 +7,10 @@ const AIChatWidget = () => {
   const [open, setOpen] = useState(false);
 
   const [messages, setMessages] = useState([
-    { sender: "bot", text: "Hello 👋 How can I help you?" },
+    {
+      sender: "bot",
+      text: "Hello! I'm your Ecommerce AI assistant. I can help with:\n\n• Viewing and navigating your orders  \n• Checking order status and shipping information  \n• Cancelling orders  \n• Initiating refunds  \n• Viewing support tickets  \n• Creating or managing support tickets  \n• Answering policy questions (returns, shipping, warranty)  \n\nHow can I assist you today?",
+    },
   ]);
 
   const [input, setInput] = useState("");
