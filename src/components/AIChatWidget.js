@@ -167,7 +167,7 @@ const AIChatWidget = () => {
     {
       sender: "bot",
       text:
-        "Hello! I'm your Ecommerce AI assistant. I can help with:\n\n" +
+        "Hello! I'm your proshop AI assistant. I can help with:\n\n" +
         "• Viewing and navigating your orders\n" +
         "• Checking order status and shipping information\n" +
         "• Cancelling orders\n" +
@@ -366,7 +366,7 @@ const AIChatWidget = () => {
     setMessages([
       {
         sender: "bot",
-        text: `Hello! I'm your Ecommerce AI assistant. I can help with:
+        text: `Hello! I'm your Proshop AI assistant. I can help with:
 
 • Viewing and navigating your orders
 • Checking order status and shipping information
