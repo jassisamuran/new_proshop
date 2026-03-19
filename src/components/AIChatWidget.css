@@ -71,7 +71,6 @@
   }
 }
 
-/* Header — dark navbar color */
 .chat-header {
   display: flex;
   align-items: center;
@@ -130,7 +129,6 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* Body */
 .chat-body {
   flex: 1;
   overflow-y: auto;
@@ -150,7 +148,6 @@
   border-radius: 4px;
 }
 
-/* User bubble */
 .user-message {
   align-self: flex-end;
   background: var(--c-accent);
@@ -164,7 +161,6 @@
   box-shadow: 0 2px 8px rgba(108, 99, 255, 0.22);
 }
 
-/* Bot group */
 .message-group {
   display: flex;
   align-items: flex-start;
@@ -201,7 +197,6 @@
   white-space: pre-wrap;
 }
 
-/* Typing */
 .typing-indicator {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
@@ -237,7 +232,6 @@
   }
 }
 
-/* UI block */
 .ui-block {
   display: flex;
   flex-direction: column;
@@ -254,7 +248,6 @@
   gap: 6px;
 }
 
-/* Order / ticket cards */
 .order-card {
   background: var(--c-surface2);
   border: 1px solid var(--c-border);
@@ -332,7 +325,6 @@
   line-height: 1.4;
 }
 
-/* Pagination */
 .ui-pagination {
   display: flex;
   align-items: center;
@@ -364,7 +356,6 @@
   text-align: center;
 }
 
-/* Input bar */
 .chat-input {
   display: flex;
   align-items: center;
