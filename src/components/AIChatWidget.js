@@ -1,4 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  COMPARE_CLEAR_ITEMS,
+  COMPARE_SET_MODE,
+} from "../constants/compareConstants";
 import "./AIChatWidget.css";
 
 const STATUS_META = {
@@ -52,31 +57,20 @@ const OrderCard = ({ order }) => {
         )}
       </div>
 
-      {order.items && order.items.length > 0 && (
+      {order.items?.length > 0 && (
         <div className="order-items">
           {visibleItems.map((item, i) => (
             <span key={i} className="order-item-chip">
               {item.name ?? item}
             </span>
           ))}
-
-          {order.items.length > 2 && !showAllItems && (
+          {order.items.length > 2 && (
             <button
               type="button"
               className="order-item-chip muted more-btn"
-              onClick={() => setShowAllItems(true)}
+              onClick={() => setShowAllItems((v) => !v)}
             >
-              +{order.items.length - 2} more
-            </button>
-          )}
-
-          {order.items.length > 2 && showAllItems && (
-            <button
-              type="button"
-              className="order-item-chip muted more-btn"
-              onClick={() => setShowAllItems(false)}
-            >
-              show less
+              {showAllItems ? "show less" : `+${order.items.length - 2} more`}
             </button>
           )}
         </div>
@@ -159,30 +153,33 @@ const BotMessage = ({ msg, isLatest, onNavigate }) => (
   </div>
 );
 
+const WELCOME_TEXT =
+  "Hello! I'm your Proshop AI assistant. I can help with:\n\n" +
+  "• Viewing and navigating your orders\n" +
+  "• Checking order status and shipping information\n" +
+  "• Cancelling orders\n" +
+  "• Initiating refunds\n" +
+  "• Viewing support tickets\n" +
+  "• Creating or managing support tickets\n" +
+  "• Answering policy questions (returns, shipping, warranty)\n\n" +
+  "How can I assist you today?";
+
 const AIChatWidget = () => {
   const apiUrl = process.env.REACT_APP_CHAT_BOAT_URL;
 
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([
-    {
-      sender: "bot",
-      text:
-        "Hello! I'm your proshop AI assistant. I can help with:\n\n" +
-        "• Viewing and navigating your orders\n" +
-        "• Checking order status and shipping information\n" +
-        "• Cancelling orders\n" +
-        "• Initiating refunds\n" +
-        "• Viewing support tickets\n" +
-        "• Creating or managing support tickets\n" +
-        "• Answering policy questions (returns, shipping, warranty)\n\n" +
-        "How can I assist you today?",
-      ui: null,
-    },
+    { sender: "bot", text: WELCOME_TEXT, ui: null },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState(null);
   const bottomRef = useRef(null);
+
+  const dispatch = useDispatch();
+  const compare = useSelector((state) => state.compare);
+  const { selectedItems, compareMode } = compare;
+  const hasCompareItems = selectedItems.length > 0;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -191,8 +188,10 @@ const AIChatWidget = () => {
   useEffect(() => {
     const stored = localStorage.getItem("userInfo");
     if (stored) {
-      const parsed = JSON.parse(stored);
-      if (parsed?.token) setToken(parsed.token);
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed?.token) setToken(parsed.token);
+      } catch {}
     }
   }, []);
 
@@ -242,8 +241,8 @@ const AIChatWidget = () => {
         if (!data?.conversation_id) return;
         localStorage.setItem("conversation_id", data.conversation_id);
 
-        const rendered = [];
         const navigationMap = {};
+        const rendered = [];
 
         data.messages.forEach((m) => {
           if (m.type === "navigation") {
@@ -256,13 +255,13 @@ const AIChatWidget = () => {
             text: m.content,
             ui: m.ui ?? null,
             message_id: m.id,
+            clicked: null,
           });
         });
 
         rendered.forEach((msg) => {
-          if (msg.message_id && navigationMap[msg.message_id]) {
+          if (msg.message_id && navigationMap[msg.message_id])
             msg.clicked = navigationMap[msg.message_id];
-          }
         });
 
         setMessages(rendered);
@@ -277,12 +276,16 @@ const AIChatWidget = () => {
     message,
     actionType = "chat",
     targetMessageId = null,
+    extraBody = {},
   ) => {
     const stored = localStorage.getItem("userInfo");
     if (stored) {
-      const parsed = JSON.parse(stored);
-      if (parsed?.token) setToken(parsed.token);
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed?.token) setToken(parsed.token);
+      } catch {}
     }
+
     if (!token) {
       setMessages((prev) => [
         ...prev,
@@ -318,15 +321,16 @@ const AIChatWidget = () => {
           action_type: actionType,
           conversation_id: localStorage.getItem("conversation_id"),
           target_message_id: targetMessageId,
+          ...extraBody,
         }),
       });
 
       const data = await response.json();
 
-      if (!localStorage.getItem("conversation_id") && data.conversation_id) {
+      if (!localStorage.getItem("conversation_id") && data.conversation_id)
         localStorage.setItem("conversation_id", data.conversation_id);
-      }
-
+      dispatch({ type: COMPARE_CLEAR_ITEMS });
+      dispatch({ type: COMPARE_SET_MODE });
       setMessages((prev) => [
         ...prev,
         {
@@ -348,39 +352,37 @@ const AIChatWidget = () => {
     setLoading(false);
   };
 
+  const handleCompareSend = () => {
+    if (selectedItems.length < 2) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "bot",
+          text: "⚠️ Please select at least 2 items to compare.",
+          ui: null,
+        },
+      ]);
+      return;
+    }
+
+    const ids = selectedItems.map((item) => item._id);
+
+    sendMessage("comparing Items", "chat", null, { selected_ids: ids });
+  };
+
   const handleNavigate = (direction, messageIndex) => {
     const msg = messages[messageIndex];
-
     setMessages((prev) => {
       const updated = [...prev];
       updated[messageIndex] = { ...updated[messageIndex], clicked: direction };
       return updated;
     });
-
     sendMessage(direction, "navigation", msg.message_id);
   };
 
   const handleClose = () => {
     localStorage.removeItem("conversation_id");
-
-    setMessages([
-      {
-        sender: "bot",
-        text: `Hello! I'm your Proshop AI assistant. I can help with:
-
-• Viewing and navigating your orders
-• Checking order status and shipping information
-• Cancelling orders
-• Initiating refunds
-• Viewing support tickets
-• Creating or managing support tickets
-• Answering policy questions (returns, shipping, warranty)
-
-How can I assist you today?`,
-        ui: null,
-      },
-    ]);
-
+    setMessages([{ sender: "bot", text: WELCOME_TEXT, ui: null }]);
     setOpen(false);
   };
 
@@ -389,6 +391,9 @@ How can I assist you today?`,
     -1,
   );
 
+  const isCompareReady = compareMode && hasCompareItems;
+  const isSendDisabled = loading || (isCompareReady ? false : !input.trim());
+
   return (
     <>
       <button
@@ -396,7 +401,10 @@ How can I assist you today?`,
         onClick={() => setOpen(!open)}
         aria-label="Open AI chat"
       >
-        {open ? "✕" : "✦"}
+        ✦
+        {hasCompareItems && compareMode && (
+          <span className="fab-badge">{selectedItems.length}</span>
+        )}
       </button>
 
       {open && (
@@ -424,19 +432,20 @@ How can I assist you today?`,
           </div>
 
           <div className="chat-body">
-            {messages.map((msg, index) => (
-              <div key={index}>
-                {msg.sender === "user" ? (
-                  <div className="user-message">{msg.text}</div>
-                ) : (
-                  <BotMessage
-                    msg={msg}
-                    isLatest={index === lastBotIndex && !msg.clicked}
-                    onNavigate={(dir) => handleNavigate(dir, index)}
-                  />
-                )}
-              </div>
-            ))}
+            {messages.map((msg, index) =>
+              msg.sender === "user" ? (
+                <div key={index} className="user-message">
+                  {msg.text}
+                </div>
+              ) : (
+                <BotMessage
+                  key={index}
+                  msg={msg}
+                  isLatest={index === lastBotIndex && !msg.clicked}
+                  onNavigate={(dir) => handleNavigate(dir, index)}
+                />
+              ),
+            )}
 
             {loading && (
               <div className="message-group">
@@ -453,21 +462,31 @@ How can I assist you today?`,
           </div>
 
           <div className="chat-input">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask something…"
-              disabled={loading}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") sendMessage(input, "chat");
-              }}
-            />
+            {!isCompareReady && (
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask something…"
+                disabled={loading}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !loading && input.trim())
+                    sendMessage(input, "chat");
+                }}
+              />
+            )}
+
             <button
-              disabled={loading || !input.trim()}
-              onClick={() => sendMessage(input, "chat")}
-              className="send-btn"
+              disabled={isSendDisabled}
+              onClick={() => {
+                if (isCompareReady) {
+                  handleCompareSend();
+                } else {
+                  sendMessage(input, "chat");
+                }
+              }}
+              className={isCompareReady ? "compare-send-btn" : "send-btn"}
             >
-              {loading ? "…" : "↑"}
+              {loading ? "…" : isCompareReady ? "Compare" : "↑"}
             </button>
           </div>
         </div>

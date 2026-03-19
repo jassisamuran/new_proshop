@@ -1,14 +1,43 @@
 import { Card } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { toggleCompareItem } from "../actions/compareActions";
 import Rating from "./Rating";
 const Product = ({ product }) => {
+  const dispatch = useDispatch();
+  const { compareMode, selectedItems } = useSelector(
+    (state) => state.compare || false,
+  );
+
+  const isSelected = selectedItems.some((items) => items._id === product._id);
+
+  const handleCompareClick = async () => {
+    const result = dispatch(toggleCompareItem(product));
+    if (!result?.success) {
+    }
+  };
   // const main = "http://localhost:5000";
   // const main = "https://res.cloudinary.com/dvqxj0tqr";
   // const next = product.image;
   // const fullPath = `${main}/${next}`;
   // console.log(fullPath);
+
   return (
     <Card className="my-3 p-3 rounded">
+      {compareMode && (
+        // <div className="">
+        <div className="d-flex justify-content-end">
+          <button
+            className={`compare-btn rounded mt-2 ${
+              isSelected ? "compare-btn-active" : ""
+            }`}
+            onClick={handleCompareClick}
+            type="button"
+          >
+            {isSelected ? "✓" : "+"}
+          </button>
+        </div>
+      )}
       {/* <h1>{product._id}</h1> */}
       <Link to={`/product/${product._id}`}>
         <Card.Img src={product.image} variant="top" className="product-image" />

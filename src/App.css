@@ -36,3 +36,56 @@
     transform: rotate(360deg);
   }
 }
+
+.compare-send-btn {
+  /* width: 100%;  */
+  padding: 10px;
+  border: none;
+  background: black;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.compare-send-btn {
+  position: relative;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: black;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.compare-send-btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -60px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.08) 60%,
+    transparent 100%
+  );
+  transform: translateY(-50%);
+  animation: moveCircle 2s linear infinite;
+}
+
+.compare-send-btn span {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes moveCircle {
+  from {
+    left: -60px;
+  }
+  to {
+    left: calc(100% + 60px);
+  }
+}
