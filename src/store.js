@@ -2,6 +2,7 @@ import { applyMiddleware, combineReducers, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
 import { cartReducers } from "./reducers/cartReducers";
+import { compareReducer } from "./reducers/compareReducers";
 import {
   orderCreateReducer,
   orderDeliveredReducer,
@@ -10,6 +11,7 @@ import {
   orderListReducer,
   orderPayReducer,
 } from "./reducers/orderReducer";
+
 import {
   productCreateReducer,
   productCreateReviewReducer,
@@ -45,6 +47,7 @@ const reducer = combineReducers({
   userDelete: userDeleteReducer,
   orderCreate: orderCreateReducer,
   orderDetail: orderDetailsReducer,
+  compare: compareReducer,
   orderPay: orderPayReducer,
   orderListMy: orderListMyReducer,
   orderList: orderListReducer,
@@ -67,12 +70,15 @@ const intialState = {
     cartItems: cartItemFromstorage,
     shippingAddress: shippingAddressFromstorage,
   },
+  compare: {
+    selectedItems: [],
+  },
   userLogin: { userInfo: userInfoFromstorage },
 };
 const middleware = [thunk];
 const store = createStore(
   reducer,
   intialState,
-  composeWithDevTools(applyMiddleware(...middleware))
+  composeWithDevTools(applyMiddleware(...middleware)),
 );
 export default store;

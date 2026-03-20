@@ -1,17 +1,18 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { Route, Lin, BrowserRouter, Routes } from "react-router-dom";
-import { LinkContainer } from "react-router-bootstrap";
+import { Container, Nav, Navbar } from "react-bootstrap";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { setCompareMode } from "../actions/compareActions";
 import { logout } from "../actions/userActions";
 import SearchBox from "../components/SearchBox";
-import { Link } from "react-router-dom";
 const Header = () => {
   // const navigate=useNavigate()
+  const dispatch = useDispatch();
+  const { compareMode } = useSelector((state) => state.compare || false);
   const dispath = useDispatch();
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -81,6 +82,17 @@ const Header = () => {
               )}
             </Nav>
           </Navbar.Collapse>
+
+          <button
+            type="button"
+            onClick={() => dispatch(setCompareMode(!compareMode))}
+            className={`compare-btn ${compareMode ? "active" : ""}`}
+          >
+            <i className="fas fa-balance-scale"></i>
+            <span className="ms-2">
+              {compareMode ? "Comparing" : "Compare"}
+            </span>
+          </button>
         </Container>
       </Navbar>
     </header>
