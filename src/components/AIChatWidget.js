@@ -22,6 +22,136 @@ const getStatus = (s = "") =>
     dot: "#9ca3af",
   };
 
+const Stars = ({ rating, max = 5 }) => {
+  const full = Math.floor(rating);
+  const half = rating % 1 >= 0.5;
+  const empty = max - full - (half ? 1 : 0);
+  return (
+    <span className="stars" aria-label={`${rating} out of ${max}`}>
+      {"★".repeat(full)}
+      {half ? "½" : ""}
+      {"☆".repeat(empty)}
+    </span>
+  );
+};
+
+const ComparisonBlock = ({ ui }) => {
+  if (!ui || ui.type !== "comparison") return null;
+
+  const {
+    query_type,
+    supported,
+    answer,
+    reason,
+    warning,
+    follow_up_question,
+    ranked_products,
+  } = ui;
+
+  if (!supported || query_type === "unsupported") {
+    return (
+      <div className="comparison-block">
+        <div className="comparison-unsupported">
+          <span className="comparison-unsupported-icon">⚠️</span>
+          <p>
+            {warning ??
+              "This data is not available in the current product set."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (query_type === "needs_preference") {
+    return (
+      <div className="comparison-block">
+        <div className="comparison-preference">
+          <span className="comparison-preference-icon">💬</span>
+          <p>
+            {follow_up_question ??
+              "Could you tell me more about what you need?"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const products = ranked_products ?? [];
+  if (!products.length) return null;
+
+  const winner = products[0];
+
+  return (
+    <div className="comparison-block">
+      {answer && (
+        <div className="comparison-winner-banner">
+          <span className="comparison-winner-icon">🏆</span>
+          <div className="comparison-winner-text">
+            <span className="comparison-winner-label">Best pick</span>
+            <span className="comparison-winner-name">{answer}</span>
+            {reason && (
+              <span className="comparison-winner-reason">{reason}</span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {warning && <div className="comparison-warning">⚠️ {warning}</div>}
+
+      <div className="comparison-cards">
+        {products.map((product) => {
+          const isWinner = product.rank === 1;
+          const outOfStock = product.stock === 0;
+          return (
+            <div
+              key={product.id}
+              className={`comparison-card ${isWinner ? "comparison-card--winner" : ""} ${outOfStock ? "comparison-card--oos" : ""}`}
+            >
+              <div
+                className={`comparison-rank-badge ${isWinner ? "comparison-rank-badge--gold" : ""}`}
+              >
+                #{product.rank}
+              </div>
+
+              <p className="comparison-card-name">{product.name}</p>
+
+              <div className="comparison-metrics">
+                <div className="comparison-metric">
+                  <span className="comparison-metric-label">Price</span>
+                  <span className="comparison-metric-value comparison-metric-price">
+                    ${product.price?.toFixed(2)}
+                  </span>
+                </div>
+                <div className="comparison-metric">
+                  <span className="comparison-metric-label">Rating</span>
+                  <span className="comparison-metric-value">
+                    <Stars rating={product.rating} />
+                    <span className="comparison-metric-num">
+                      {product.rating}
+                    </span>
+                  </span>
+                </div>
+                <div className="comparison-metric">
+                  <span className="comparison-metric-label">Stock</span>
+                  <span
+                    className={`comparison-metric-value ${outOfStock ? "comparison-metric--oos" : "comparison-metric--instock"}`}
+                  >
+                    {outOfStock ? "Out of stock" : `${product.stock} left`}
+                  </span>
+                </div>
+              </div>
+
+              {product.why && (
+                <p className="comparison-card-why">{product.why}</p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 const OrderCard = ({ order }) => {
   const status = getStatus(order.status);
   const [showAllItems, setShowAllItems] = useState(false);
@@ -146,7 +276,10 @@ const BotMessage = ({ msg, isLatest, onNavigate }) => (
     <div className="bot-avatar">✦</div>
     <div className="bot-message-wrap">
       {msg.text && <div className="bot-message">{msg.text}</div>}
-      {msg.ui && (
+
+      {msg.ui?.type === "comparison" ? (
+        <ComparisonBlock ui={msg.ui} />
+      ) : (
         <UIBlock ui={msg.ui} isLatest={isLatest} onNavigate={onNavigate} />
       )}
     </div>
@@ -478,11 +611,8 @@ const AIChatWidget = () => {
             <button
               disabled={isSendDisabled}
               onClick={() => {
-                if (isCompareReady) {
-                  handleCompareSend();
-                } else {
-                  sendMessage(input, "chat");
-                }
+                if (isCompareReady) handleCompareSend();
+                else sendMessage(input, "chat");
               }}
               className={isCompareReady ? "compare-send-btn" : "send-btn"}
             >

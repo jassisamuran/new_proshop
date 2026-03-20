@@ -23,12 +23,18 @@ const Product = ({ product }) => {
   // console.log(fullPath);
 
   return (
-    <Card className="my-3 p-3 rounded">
+    <Card className="my-3 p-3 rounded position-relative">
       {compareMode && (
-        // <div className="">
-        <div className="d-flex justify-content-end">
+        <div
+          style={{
+            position: "absolute",
+            top: "-10px",
+            right: "10px",
+            zIndex: 2,
+          }}
+        >
           <button
-            className={`compare-btn rounded mt-2 ${
+            className={`compare-btn-pd rounded border-0 ${
               isSelected ? "compare-btn-active" : ""
             }`}
             onClick={handleCompareClick}
