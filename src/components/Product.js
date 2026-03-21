@@ -1,70 +1,59 @@
-import { Card } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toggleCompareItem } from "../actions/compareActions";
 import Rating from "./Rating";
+
 const Product = ({ product }) => {
   const dispatch = useDispatch();
   const { compareMode, selectedItems } = useSelector(
-    (state) => state.compare || false,
+    (state) => state.compare || {},
   );
 
-  const isSelected = selectedItems.some((items) => items._id === product._id);
+  const isSelected =
+    selectedItems?.some((item) => item._id === product._id) || false;
 
-  const handleCompareClick = async () => {
-    const result = dispatch(toggleCompareItem(product));
-    if (!result?.success) {
-    }
+  const handleCompareClick = () => {
+    dispatch(toggleCompareItem(product));
   };
-  // const main = "http://localhost:5000";
-  // const main = "https://res.cloudinary.com/dvqxj0tqr";
-  // const next = product.image;
-  // const fullPath = `${main}/${next}`;
-  // console.log(fullPath);
 
   return (
-    <Card className="my-3 p-3 rounded position-relative">
+    <div
+      className={`product-card ${isSelected ? "product-card--selected" : ""}`}
+    >
       {compareMode && (
-        <div
-          style={{
-            position: "absolute",
-            top: "-10px",
-            right: "10px",
-            zIndex: 2,
-          }}
+        <button
+          className={`compare-badge ${isSelected ? "compare-badge--active" : ""}`}
+          onClick={handleCompareClick}
+          type="button"
         >
-          <button
-            className={`compare-btn-pd rounded border-0 ${
-              isSelected ? "compare-btn-active" : ""
-            }`}
-            onClick={handleCompareClick}
-            type="button"
-          >
-            {isSelected ? "✓" : "+"}
-          </button>
-        </div>
+          {isSelected ? "✓" : "+"}
+        </button>
       )}
-      {/* <h1>{product._id}</h1> */}
-      <Link to={`/product/${product._id}`}>
-        <Card.Img src={product.image} variant="top" className="product-image" />
+
+      <Link to={`/product/${product._id}`} className="product-image-link">
+        <div className="product-image-box">
+          <img src={product.image} alt={product.name} className="product-img" />
+        </div>
       </Link>
 
-      <Card.Body>
-        <Link to={`/product/${product._id}`}>
-          <Card.Title as="div">
-            <strong>{product.name}</strong>
-          </Card.Title>
+      <div className="product-info">
+        <Link to={`/product/${product._id}`} className="product-title-link">
+          <h3 className="product-title">{product.name}</h3>
         </Link>
-      </Card.Body>
 
-      <Card.Text ad="div">
-        <Rating>
-          value={product.rating} text={`{product.numReviews} reviews`}
-        </Rating>
-      </Card.Text>
-      <Card as="text">${product.price}</Card>
-      {/* <h1>{product._id}</h1> */}
-    </Card>
+        <div className="product-rating-row">
+          <Rating value={product.rating} />
+          <span className="review-count">{product.numReviews} reviews</span>
+        </div>
+
+        <div className="product-bottom">
+          <span className="product-price">${product.price}</span>
+          <Link to={`/product/${product._id}`} className="view-btn">
+            View <span className="arrow">→</span>
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 };
 
