@@ -1,70 +1,198 @@
-# Getting Started with Create React App
+# 🛒 ProShop — Full Stack E-Commerce Platform with AI Assistant
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+> A production-ready, full-stack e-commerce system with an integrated AI chatbot for customer support, product comparison, and order management.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Overview
 
-### `npm start`
+ProShop is a modern e-commerce platform designed to deliver a seamless shopping experience. It goes beyond a typical storefront by integrating an **AI-powered assistant** that enhances user interaction and automates support workflows.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+This project demonstrates real-world engineering skills including:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+* Full-stack architecture
+* Microservice-style separation (Frontend, Backend, AI Service)
+* Real-time and API-based communication
+* Scalable deployment using Docker
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🏗️ Project Architecture
 
-### `npm run build`
+This system is split into multiple repositories/services:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+* 🖥️ **Frontend (React)**
+  https://github.com/jassisamuran/new_proshop
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+* ⚙️ **Backend API (Node.js / Django)**
+  https://github.com/jassisamuran/proshop
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+* 🤖 **AI Chat Service**
+  https://github.com/jassisamuran/ai-support-agent
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🔄 System Flow
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
+User
+ ↓
+Frontend (React)
+ ↓
+Backend API (Authentication, Orders, Products)
+ ↓
+Database
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+        ↓
+   AI Chat Service (LLM / RAG)
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+* Frontend communicates with backend via REST APIs
+* Backend handles business logic and database operations
+* AI chatbot runs as a separate service for intelligent queries
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## ✨ Features
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 🧑‍💻 Customer-Facing
 
-### Code Splitting
+* Product browsing, search, and filtering
+* Detailed product pages with ratings & reviews
+* Persistent shopping cart
+* Multi-step checkout (shipping, payment, confirmation)
+* User authentication and profile management
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+### 🤖 AI-Powered Assistant
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+* Real-time chat support
+* Order status tracking
+* Product comparison
+* FAQ & policy queries (returns, shipping, warranty)
+* Ticket creation and management
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### 🛠️ Admin Features
 
-### Advanced Configuration
+* User management
+* Product CRUD operations
+* Order tracking and delivery updates
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## 🧰 Tech Stack
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Frontend
 
-### `npm run build` fails to minify
+* React
+* Redux / Redux Thunk
+* React Router
+* Axios
+* Bootstrap / Tailwind
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Backend
+
+* Node.js / Django (REST APIs)
+* JWT Authentication
+* Database (MongoDB / PostgreSQL)
+
+### AI Service
+
+* LLM Integration (RAG / Vector DB)
+* Python / FastAPI (or similar)
+
+
+
+---
+
+## ⚙️ Environment Variables
+
+Create a `.env` file in the frontend root:
+
+```
+# Backend API
+REACT_APP_API_URL=http://localhost:5000
+
+# AI Chat Service
+REACT_APP_CHATBOT_URL=http://localhost:8000
+```
+
+> ⚠️ Ensure backend and chatbot services are running before starting frontend.
+
+---
+
+## 🛠️ Installation & Setup
+
+### 1️⃣ Clone Frontend
+
+```
+git clone https://github.com/jassisamuran/new_proshop.git
+cd new_proshop
+npm install
+```
+
+---
+
+### 2️⃣ Start Backend
+
+```
+cd backend
+npm install
+npm start
+```
+
+---
+
+### 3️⃣ Start AI Chat Service
+
+```
+cd chatbot
+pip install -r requirements.txt
+python app.py
+```
+
+---
+
+### 4️⃣ Run Frontend
+
+```
+npm start
+```
+
+App will run at:
+👉 http://localhost:3000
+
+
+## 📈 Key Highlights
+
+* Designed **modular architecture** with separate AI service
+* Built **real-world e-commerce workflows**
+* Integrated **AI chatbot for automation**
+
+---
+
+## 📌 Future Improvements
+
+* WebSocket-based real-time notifications
+* Advanced recommendation system
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to fork and submit a PR.
+
+---
+
+## 📬 Contact
+
+**Jaspreet Singh**
+
+* LinkedIn: https://www.linkedin.com/in/jaspreet-singh-7315ba220/
+* GitHub: https://github.com/jassisamuran
+
+---
+
