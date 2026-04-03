@@ -24,10 +24,10 @@ This system is split into multiple repositories/services:
 * 🖥️ **Frontend (React)**
   https://github.com/jassisamuran/new_proshop
 
-* ⚙️ **Backend API (Node.js / Django)**
+* ⚙️ **Backend API (Node.js )**
   https://github.com/jassisamuran/proshop
 
-* 🤖 **AI Chat Service**
+* 🤖 **AI Chat Service (FastApi)**
   https://github.com/jassisamuran/ai-support-agent
 
 ---
